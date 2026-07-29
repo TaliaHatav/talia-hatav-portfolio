@@ -1,38 +1,184 @@
 ---
 import { siteConfig } from '@config/site';
+import { getCollection } from 'astro:content';
 
-interface Props {
-  headline?: string;
-  subtitle?: string;
-}
-
-const { 
-  headline = siteConfig.name,
-  subtitle = siteConfig.description
-} = Astro.props;
+const projects = (await getCollection('projects'))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 ---
 
-<section class="hero">
-  <div class="container">
-    <h1 class="hero-title">{headline}</h1>
-    <p class="hero-subtitle">{subtitle}</p>
+<section class="intro">
+  <div class="container intro-top">
+    <div class="intro-name">
+      <a href="/">{siteConfig.name}</a>
+    </div>
+    <ul class="intro-contacts" role="list">
+      {siteConfig.social.map(link => (
+        <li><a href={link.href} target="_blank" rel="noopener noreferrer">{link.label}</a></li>
+      ))}
+    </ul>
+  </div>
+
+  <div class="container intro-main">
+    <p class="intro-bio" id="intro-bio">{siteConfig.bio}</p>
+
+    <ul class="intro-list" role="list">
+      {projects.map((project, i) => (
+        <li class="intro-list-row" data-hover-preview={i === 0 ? 'true' : undefined}>
+          <a href={project.data.externalUrl || `/projects/${project.id}`} target={project.data.externalUrl ? '_blank' : undefined}>
+            {project.data.title}
+          </a>
+          <span class="intro-list-year">{project.data.date.getFullYear()}</span>
+        </li>
+      ))}
+    </ul>
+  </div>
+
+  <div class="hover-preview" id="hover-preview">
+    <video src="/videos/project-preview-1.mp4" autoplay muted loop playsinline></video>
   </div>
 </section>
 
 <style>
-  .hero {
-    padding: var(--space-2xl) 0 var(--space-xl);
+  .intro {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 8px;
+    box-sizing: border-box;
   }
 
-  .hero-title {
+  .intro-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+
+  .intro-main {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: var(--space-xl);
+    row-gap: var(--space-lg);
+    align-content: center;
+  }
+
+  .intro-name a {
+    font-size: clamp(2.25rem, 4vw, 3rem);
+  }
+
+  .intro-contacts {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    text-align: right;
+  }
+
+  .intro-contacts a {
+    font-size: 1.35rem;
+  }
+
+  .intro-bio {
+    font-size: clamp(2.25rem, 4vw, 3.25rem);
     font-weight: 700;
-    margin-bottom: var(--space-md);
+    line-height: 1.3;
+    max-width: 32ch;
   }
 
-  .hero-subtitle {
-    color: var(--color-text-secondary);
-    font-size: clamp(1.125rem, 2vw, 1.35rem);
-    max-width: 40ch;
-    line-height: 1.5;
+  .intro-bio :global(a) {
+    text-decoration: underline;
+  }
+
+  .intro-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .intro-list-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--space-md);
+    padding: 0.5em 0;
+    border-bottom: 1px solid var(--color-border);
+    font-size: 2rem;
+  }
+
+  .intro-list-year {
+    font-size: 1.3rem;
+    opacity: 0.7;
+    white-space: nowrap;
+  }
+
+  .hover-preview {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: min(42vw, 560px);
+    opacity: 0;
+    pointer-events: none;
+    z-index: 10;
+  }
+
+  .hover-preview.is-visible {
+    opacity: 1;
+  }
+
+  .hover-preview video {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  @media (max-width: 900px) {
+    .hover-preview {
+      display: none;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .intro-main {
+      grid-template-columns: 1fr;
+    }
+
+    .intro-contacts {
+      text-align: left;
+    }
   }
 </style>
+
+<script>
+  const trigger = document.querySelector('[data-hover-preview]');
+  const preview = document.getElementById('hover-preview');
+  const bio = document.getElementById('intro-bio');
+
+  function positionPreview() {
+    if (!preview || !bio || !trigger) return;
+    const bioRect = bio.getBoundingClientRect();
+    const previewRect = preview.getBoundingClientRect();
+    const rowRect = trigger.getBoundingClientRect();
+
+    const verticalOffset = 160;
+    const centerX = bioRect.left + bioRect.width / 2;
+    const centerY = rowRect.top + rowRect.height / 2 + verticalOffset;
+
+    preview.style.left = `${centerX - previewRect.width / 2}px`;
+    preview.style.top = `${centerY - previewRect.height / 2}px`;
+  }
+
+  if (trigger && preview) {
+    trigger.addEventListener('mouseenter', () => {
+      positionPreview();
+      preview.classList.add('is-visible');
+    });
+
+    trigger.addEventListener('mouseleave', () => {
+      preview.classList.remove('is-visible');
+    });
+
+    window.addEventListener('resize', () => {
+      if (preview.classList.contains('is-visible')) positionPreview();
+    });
+  }
+</script>

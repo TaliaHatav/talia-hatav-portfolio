@@ -4,8 +4,9 @@ description: "Replace this with a real project. This is here to show you the for
 date: 2024-01-01
 tags: ["UI Design", "Branding"]
 role: "Lead Designer"
+location: "Tel Aviv, Israel"
 tools: ["Figma", "Illustrator"]
-cover: "../../assets/projects/placeholder.svg"
+cover: "../../assets/projects/placeholder.png"
 featured: true
 order: 1
 ---

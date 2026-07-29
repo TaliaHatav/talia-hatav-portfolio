@@ -1,5 +1,5 @@
 ---
-import ProjectCard from '@components/project/ProjectCard.astro';
+import { Image } from 'astro:assets';
 import { getCollection } from 'astro:content';
 
 const projects = (await getCollection('projects'))
@@ -8,10 +8,24 @@ const projects = (await getCollection('projects'))
 
 <section class="project-grid-section">
   <div class="container">
-    <div class="project-grid">
-      {projects.map(project => (
-        <ProjectCard project={project} />
-      ))}
+    <div class="masonry">
+      {projects.map(project => {
+        const href = project.data.externalUrl || `/projects/${project.id}`;
+        return (
+          <a
+            href={href}
+            class="masonry-item"
+            target={project.data.externalUrl ? '_blank' : undefined}
+            rel={project.data.externalUrl ? 'noopener noreferrer' : undefined}
+          >
+            <Image src={project.data.cover} alt={project.data.title} widths={[400, 800]} sizes="(max-width: 768px) 100vw, 33vw" loading="lazy" />
+            <span class="masonry-caption">
+              <span class="masonry-title">{project.data.title}</span>
+              {project.data.location && <span class="masonry-location">{project.data.location}</span>}
+            </span>
+          </a>
+        );
+      })}
     </div>
   </div>
 </section>
@@ -21,9 +35,60 @@ const projects = (await getCollection('projects'))
     padding-bottom: var(--space-2xl);
   }
 
-  .project-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(min(100%, 350px), 1fr));
-    gap: var(--space-lg);
+  .masonry {
+    column-count: 2;
+    column-gap: var(--space-md);
+  }
+
+  @media (min-width: 900px) {
+    .masonry {
+      column-count: 4;
+    }
+  }
+
+  .masonry-item {
+    display: block;
+    position: relative;
+    margin-bottom: var(--space-md);
+    break-inside: avoid;
+    overflow: hidden;
+  }
+
+  .masonry-item :global(img) {
+    display: block;
+    width: 100%;
+    height: auto;
+    transition: transform var(--transition-normal);
+  }
+
+  .masonry-item:hover :global(img) {
+    transform: scale(1.03);
+  }
+
+  .masonry-caption {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    gap: 0.15em;
+    padding: var(--space-md);
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.55), transparent 60%);
+    color: #fffff2;
+    opacity: 0;
+    transition: opacity var(--transition-fast);
+  }
+
+  .masonry-item:hover .masonry-caption {
+    opacity: 1;
+  }
+
+  .masonry-title {
+    font-size: 1.5rem;
+  }
+
+  .masonry-location {
+    font-size: 1.1rem;
+    opacity: 0.85;
   }
 </style>

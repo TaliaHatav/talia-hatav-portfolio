@@ -8,9 +8,10 @@ interface Props {
   title: string;
   description: string;
   image?: string;
+  bare?: boolean;
 }
 
-const { title, description, image } = Astro.props;
+const { title, description, image, bare = false } = Astro.props;
 ---
 
 <!doctype html>
@@ -19,10 +20,10 @@ const { title, description, image } = Astro.props;
     <BaseHead {title} {description} {image} />
   </head>
   <body>
-    <Navbar />
+    {!bare && <Navbar />}
     <main>
       <slot />
     </main>
-    <Footer />
+    {!bare && <Footer />}
   </body>
 </html>
