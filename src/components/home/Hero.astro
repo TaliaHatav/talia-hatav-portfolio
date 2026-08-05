@@ -55,7 +55,7 @@ const projects = (await getCollection('projects'))
   .intro {
     display: flex;
     flex-direction: column;
-    padding: 4px;
+    padding: 16px;
     width: 100%;
   }
 
@@ -65,7 +65,7 @@ const projects = (await getCollection('projects'))
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding: 4px;
+    padding: 16px;
   }
 
   .intro-header {
@@ -75,9 +75,9 @@ const projects = (await getCollection('projects'))
     gap: 2rem;
     position: fixed;
     top: 0;
-    left: 4px;
-    right: 4px;
-    padding: 0;
+    left: 0;
+    right: 0;
+    padding: 16px;
     z-index: 100;
     background-color: #ffffff;
   }
@@ -137,7 +137,7 @@ const projects = (await getCollection('projects'))
     display: grid;
     grid-template-columns: 1fr;
     gap: 5rem;
-    padding: 4rem 4px 4rem 4px;
+    padding: 4rem 16px 4rem 16px;
   }
 
   .project-card {
