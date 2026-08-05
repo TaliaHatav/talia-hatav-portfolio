@@ -84,17 +84,21 @@ const projects = (await getCollection('projects'))
   }
 
   .intro-header a {
-    font-size: 0.875rem;
+    font-size: 12px;
     font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 0.05em;
     text-decoration: none;
     opacity: 0.8;
-    transition: opacity 0.3s;
+    transition: opacity 0.3s, border-color 0.3s;
+    padding: 8px 12px;
+    border: 1px solid #1a1a1a;
+    border-radius: 4px;
   }
 
   .intro-header a:hover {
     opacity: 1;
+    border-color: #0b5aff;
   }
 
   .logo {
@@ -103,6 +107,8 @@ const projects = (await getCollection('projects'))
     text-transform: none !important;
     letter-spacing: 0 !important;
     opacity: 1 !important;
+    border: none !important;
+    padding: 0 !important;
   }
 
   .intro-tagline {
