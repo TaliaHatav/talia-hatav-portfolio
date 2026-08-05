@@ -73,11 +73,13 @@ const projects = (await getCollection('projects'))
     grid-template-columns: 1fr 1fr 1fr;
     align-items: center;
     gap: 2rem;
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 4px;
     right: 4px;
     padding: 0;
+    z-index: 100;
+    background-color: #ffffff;
   }
 
   .header-left,
